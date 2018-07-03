@@ -1,0 +1,63 @@
+baseurl = "https://www.patrio.blog/"
+title = "Patrio's blog site"
+theme = "ghostwriter"
+languageCode = "en-us"
+copyright = "Patrik Drhlík"
+disqusShortname = "XXX"
+googleAnalytics = "XXX"
+
+[Privacy]
+
+[Privacy.disqus]
+    disable = true
+
+[Privacy.googleAnalytics]
+    anonymizeIP = true
+    respectDoNotTrack = true
+    useSessionStorage = false
+
+[Author]
+    name = "Patrik Drhlík"
+
+[Taxonomies]
+    tag = "tags"
+
+[Params]
+    intro = true
+    headline = "Patrio's blog site"
+    description = "Mostly about R"
+    github = "https://github.com/pdrhlik"
+    linkedin = "https://linkedin.com/in/patrik.drhlik/"
+    twitter = "https://twitter.com/PatrioScraper"
+    email = "patrik.drhlik@gmail.com"
+    opengraph = true
+    shareTwitter = true
+    shareFacebook = true
+    shareGooglePlus = true
+    shareLinkedIn = true
+    dateFormat = "Mon, Jan 2, 2006"
+    highlightJsUrl = ""
+    highlightJsLocalUrl = ""
+
+[Permalinks]
+    post = "/:filename/"
+
+[[menu.main]]
+    name = "Blog"
+    url = "/"
+    weight = 1
+
+# [[menu.main]]
+#    name = "Projects"
+#    url = "/project/"
+#    weight = 2
+
+[[menu.main]]
+    name = "Contact"
+    url = "/page/contact/"
+    weight = 3
+
+[[menu.main]]
+    name = "About"
+    url = "/page/about/"
+    weight = 4

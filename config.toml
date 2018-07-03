@@ -3,8 +3,8 @@ title = "Patrio's blog site"
 theme = "ghostwriter"
 languageCode = "en-us"
 copyright = "Patrik Drhlík"
-disqusShortname = "XXX"
-googleAnalytics = "XXX"
+disqusShortname = "patrioblog"
+googleAnalytics = "UA-105666525-1"
 
 [Privacy]
 

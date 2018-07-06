@@ -5,6 +5,7 @@ languageCode = "en-us"
 copyright = "Patrik Drhlík"
 disqusShortname = "patrioblog"
 googleAnalytics = "UA-105666525-1"
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [Privacy]
 
@@ -38,9 +39,10 @@ googleAnalytics = "UA-105666525-1"
     dateFormat = "Mon, Jan 2, 2006"
     highlightJsUrl = ""
     highlightJsLocalUrl = ""
+    mathJaxCDN = "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"
 
 [Permalinks]
-    post = "/:filename/"
+    post = "/:slug/"
 
 [[menu.main]]
     name = "Blog"

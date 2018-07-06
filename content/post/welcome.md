@@ -1,10 +1,10 @@
 +++
 title = "Welcome!"
 author = "Patrik Drhlík"
-date = 2018-07-06
+date = "2018-07-06"
 slug = "welcome"
 categories = []
-tags = ["r", "whyr", "lightning-talk"]
+tags = ["r"]
 description = ""
 +++
 

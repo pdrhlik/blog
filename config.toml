@@ -1,4 +1,4 @@
-baseurl = "https://www.patrio.blog/"
+baseurl = "https://patrio.blog/"
 title = "Patrio's blog site"
 theme = "ghostwriter"
 languageCode = "en-us"

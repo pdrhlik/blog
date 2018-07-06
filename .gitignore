@@ -2,3 +2,4 @@
 *.Rproj
 .Rhistory
 node_modules/
+public/

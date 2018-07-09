@@ -1,0 +1,17 @@
+---
+title: Going Down to South Park to Make Some Tidytext Analysis
+author: Patrik Drhlík
+date: '2018-07-09'
+slug: going-down-to-south-park-to-make-some-tidytext-analysis
+categories: []
+tags:
+  - r
+  - southpark
+  - tidytext
+  - sentiment-analysis
+  - imdb
+description: ''
+---
+
+# My very first lightning talk
+

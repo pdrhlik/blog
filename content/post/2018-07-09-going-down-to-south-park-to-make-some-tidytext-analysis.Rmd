@@ -1,17 +1,183 @@
 ---
-title: Going Down to South Park to Make Some Tidytext Analysis
+title: South Park Analysis I - Script Scraping
 author: Patrik Drhlík
 date: '2018-07-09'
-slug: going-down-to-south-park-to-make-some-tidytext-analysis
-categories: []
 tags:
+  - imdb
   - r
   - southpark
-  - tidytext
-  - sentiment-analysis
-  - imdb
-description: ''
+  - southparkr
+  - rvest
+  - web-scraping
+slug: going-down-to-south-park-to-make-some-tidytext-analysis
 ---
 
-# My very first lightning talk
+<img src="/img/boys.png" title="South Park - Stan, Kyle, Eric, Kenny" alt="South Park main characters" />
 
+# South Park, my favourite TV show
+
+[South Park](https://en.wikipedia.org/wiki/South_Park) is an American TV show made with a sloppy animation. I think that most of the people around the globe have heard about. It is known for being very satiric. There probably isn't a famous person left in the world that hasn't been made fun of in the series. Check out the [list of celebrities here](https://southpark.wikia.com/wiki/Category:Celebrities). The creators, Trey Parker and Matt Stone, aired their first episode in 1997 and the show is still on after 21 seasons and 287 episodes.
+
+I like the show a lot. I've seen each of the episodes for at least 10 times and I'm still looping them before I go to bed or just as a nice background noise. I don't really remember how it happened, but a question came to my mind one day: Is it possible to get all the lines that have been said across the series? It could be pretty cool to do a text analysis of my favourite show. After a not such a long time of Googling, I found this amazing website - [South Park Archives powered by Wikia](https://southpark.wikia.com/wiki/Portal:Scripts)! It contains all the scripts for all episodes in a unified format! Bingo!
+
+## I am the Scraper
+
+The whole nick name would be Patrio Scraper, as explained in the [about section](/page/about). Many years later after the nick was created, I actually started to enjoy web scraping. The real fun began when I started using R! Especially the great [rvest package](https://github.com/hadley/rvest). I have built my own package called [southparkr](https://github.com/pdrhlik/southparkr) that has all the necessary functions to scrape the data. It can be easily modified to create a scraper for a different show. I will try to do that myself in the future.
+
+But let's move on to finally see some action!
+
+## Getting episode links
+
+The page with scripts has three levels. The [top level](https://southpark.wikia.com/wiki/Portal:Scripts) points to a list of seasons. Each season has an image and a link. Then we can get deeper into the [season level (link to season one)](https://southpark.wikia.com/wiki/Portal:Scripts/Season_One). We can see a list of episodes here, each pointing to the [last level - scripts themselves (link to S01E01)](https://southpark.wikia.com/wiki/Cartman_Gets_an_Anal_Probe/Script).
+
+I will show and describe functions from [southparkr](https://github.com/pdrhlik/southparkr). Let's get the links and glimpse at the resulting data frame.
+
+```{r fetch_episode_list, message = FALSE, warning = FALSE}
+# devtools::install_github("pdrhlik/southparkr")
+require(southparkr)
+require(dplyr)
+
+episode_list <- fetch_episode_list()
+glimpse(episode_list)
+```
+
+We can see that the data frame has 287 rows - the same number as all the episodes, that's a success! Each row has basic information about an episode. Its name, position in a season and most importantly, the link to the script page.
+
+The simplified HTML that we are scraping from the first two levels looks like this:
+
+```
+<div class="wikia-gallery-item">
+  <a href="/wiki/Portal:Scripts/Season_One" title="Portal:Scripts/Season One">Season One</a>
+</div>
+```
+
+There are two main pieces of information that we might scrape. The `season_name` and the `season_link`. We always have to download the whole page. Then we can extract the `a` elements that contain the data. It's pretty straightforward using `rvest`.
+
+```
+nodes <- xml2::read_html(season_link) %>%
+	rvest::html_nodes(".wikia-gallery-item .lightbox-caption a")
+
+season_links <- nodes %>%
+	rvest::html_attr(name = "href")
+
+season_names <- season_nodes %>%
+	rvest::html_text()
+```
+
+If we put the above code chunk in a function called `fetch_season_episode_list(season_link)`, we can easily use `purrr` to fetch links for every episode in every season.
+
+```
+all_episode_links <- purrr::map_df(season_links, fetch_season_episode_list)
+```
+
+Look at the implementation of `fetch_season_episode_list` and `fetch_episode_list` in the `southparkr` package to see it all work together.
+
+## We have the links but we want more!
+
+The next step is to scrape the actual conversations. That shouldn't be a problem With all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.
+
+<img src="/img/wikia-table-example.png" title="Example of a table with scripts on southpark.wikia.com" alt="Example of a table with scripts on southpark.wikia.com" />
+
+There is a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn't have any identifiers. But fortunately, it is always the second table on the script page. `rvest` will help us here again.
+
+```
+episode <- episode_link %>%
+	xml2::read_html() %>%
+	rvest::html_nodes("table:nth-of-type(1)") %>%
+	rvest::html_table(fill = TRUE) %>%
+	`[[`(2) %>%
+	dplyr::mutate(episode_link = episode_link) %>%
+	dplyr::rename(
+		character = X1,
+		text = X2
+	)
+```
+
+The above code parses the HTML table and renames the to columns to `character` and `text`. The table doesn't have a header, so `rvest` calls these two variables `X1` and `X2` by default. It also adds an `episode_link` to the data frame. Similarly to the approach of getting links, we can use `purrr` to apply this to all episodes. Consider the above code chunk to be a body of a function `fetch_episode(episode_link)`.
+
+```
+all_episodes <- purrr::map_df(episode_list$episode_link, fetch_episode) %>%
+	dplyr::left_join(episode_list, by = "episode_link")
+```
+
+```{r fetch_all_episodes, echo = FALSE}
+all_episodes <- southparkr::fetch_all_episodes(episode_list)
+glimpse(all_episodes)
+```
+
+After all of these steps, we have prepared all the raw data that can be processed and analysed further.
+
+## How about IMDB ratings?
+
+There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. [IMDB](https://www.imdb.com) has exactly the data we need. The only unfortunate problem is that they don't allow data scraping from their website as stated [here on their help page](https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#).
+
+I have to admit that I have created a scraper that they forbid. It solely for the purpose of the `southparkr` package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage [here](https://www.imdb.com/interfaces/) but I haven't managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.
+
+That means that the following code should not be used by anyone. It should only be viewed as an educational example.
+
+```
+fetch_season_ratings <- function(season_number) {
+	rating_url <- paste0("https://www.imdb.com/title/tt0121955/episodes?season=", season_number)
+	html <- xml2::read_html(rating_url)
+
+	ratings <- dplyr::data_frame(
+		season_number = season_number,
+		season_episode_number = rvest::html_nodes(html, ".list_item .image div div") %>%
+			rvest::html_text() %>%
+			stringr::str_extract("\\d+$") %>%
+			as.numeric(),
+		episode_name = rvest::html_nodes(html, ".list_item .info strong a") %>%
+			rvest::html_text(),
+		air_date = rvest::html_nodes(html, ".list_item .info .airdate") %>%
+			rvest::html_text() %>%
+			lubridate::dmy(),
+		user_rating = rvest::html_nodes(html, "#episodes_content > div.clear > div.list.detail.eplist > div.list_item > div.info > div.ipl-rating-widget > div.ipl-rating-star > span.ipl-rating-star__rating") %>%
+			rvest::html_text() %>%
+			as.numeric(),
+		user_votes = rvest::html_nodes(html, "#episodes_content > div.clear > div.list.detail.eplist > div.list_item > div.info > div.ipl-rating-widget > div.ipl-rating-star > span.ipl-rating-star__total-votes") %>%
+			rvest::html_text() %>%
+			stringr::str_replace_all("[^0-9]", "") %>%
+			as.numeric()
+	)
+
+	return(ratings)
+}
+```
+
+`fetch_season_ratings(season_number)` scrapes the average user rating and user votes for a certain season. Following a similar pattern as before, you can easily get ratings across all seasons with `purrr`.
+
+```
+all_ratings <- purrr::map_df(season_numbers, fetch_season_ratings)
+```
+
+```{r, echo = FALSE}
+all_ratings <- southparkr::fetch_ratings(1:21)
+glimpse(all_ratings)
+```
+
+IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called **Unaired Pilot** from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot too [here](https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script). But I decided only to include the official episodes.
+
+The last thing to do is to join these data frames together and we are ready to do some preprocessing!
+
+```{r}
+episodes_with_ratings <- left_join(
+	all_episodes,
+	all_ratings,
+	by = c("season_number", "season_episode_number")
+)
+```
+
+```{r, echo = FALSE}
+episodes_with_ratings %>%
+	rename(episode_name = episode_name.x) %>%
+	select(-episode_name.y) %>%
+	glimpse()
+```
+
+# What's next? Tidytext analysis!
+
+At first, I thought that I would fit everything in one article but the scraping itself got a bit longer than expected. Therefore I decided to split it in two. Web scraping using `rvest` is really easy and I enjoy it a lot! I will show you an interesting text analysis in the next article. Except for the basic stuff you can do with the `stringr` or `tidytext` packages, I will also try to answer a few questions.
+
+Are naughtier episodes (read with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtier character in all the series? Or is it someone else?
+
+Thanks for reading and wait for the next one. If you know South Park, trust me, it will be wort it! If not, you might at least learn something new.

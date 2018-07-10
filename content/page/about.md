@@ -5,11 +5,11 @@ author = "Patrik Drhlík"
 description = "Well, this is me."
 +++
 
-## About me, profesionally
+## About me, professionally
 
-I'll just tell you a bit here. You can find more details at my [LinkedIn profile](https://www.linkedin.com/in/patrik-drhlik/).
+I'll just tell you a bit here. You can find more details on my [LinkedIn profile](https://www.linkedin.com/in/patrik-drhlik/).
 
-My name is Patrik Drhlík and I consider myself to be a data scientist. I gained my Master's degree at the [Teechnical University of Liberec](https://www.tul.cz/en/), Czech Republic in Computer science. I am currently pursuing my PhD at the same university and I'm also doing some freelancing.
+My name is Patrik Drhlík and I consider myself to be a data scientist. I gained my Master's degree at the [Technical University of Liberec](https://www.tul.cz/en/), Czech Republic, in Computer science. I am currently pursuing my PhD at the same university and I'm also doing some freelancing.
 
 I mostly work with R, analysing data. But I have a very strong background in web and database development.
 

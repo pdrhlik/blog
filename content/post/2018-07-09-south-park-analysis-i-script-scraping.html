@@ -1,17 +1,16 @@
 ---
-draft: yes
-title: Going Down to South Park to Make Some Tidytext Analysis
+title: South Park Analysis I - Script Scraping
 author: Patrik Drhlík
 date: '2018-07-09'
-slug: going-down-to-south-park-to-make-some-tidytext-analysis
-categories: []
 tags:
+  - imdb
   - r
   - southpark
-  - tidytext
-  - sentiment-analysis
-  - imdb
-description: ''
+  - southparkr
+  - rvest
+  - web-scraping
+slug: south-park-analysis-i-script-scraping
+draft: no
 ---
 
 
@@ -23,7 +22,7 @@ description: ''
 <p>I like the show a lot. I’ve seen each of the episodes for at least 10 times and I’m still looping them before I go to bed or just as a nice background noise. I don’t really remember how it happened, but a question came to my mind one day: Is it possible to get all the lines that have been said across the series? It could be pretty cool to do a text analysis of my favourite show. After a not such a long time of Googling, I found this amazing website - <a href="https://southpark.wikia.com/wiki/Portal:Scripts">South Park Archives powered by Wikia</a>! It contains all the scripts for all episodes in a unified format! Bingo!</p>
 <div id="i-am-the-scraper" class="section level2">
 <h2>I am the Scraper</h2>
-<p>The whole nick name would be Patrio Scraper, as explained in the <a href="/page/about">about section</a>. Many years later after the nick was created, I actually started to enjoy web scraping. The real fun began when I started using R! Especially the great <a href="https://github.com/hadley/rvest">rvest package</a>. I have built my own package called <a href="https://github.com/pdrhlik/southparkr">southparkr</a> that has all the necessary functions to scrape the data. It can be easily modified to create a scraper for a different show. I will try to do that myself in the future.</p>
+<p>The whole nickname would be Patrio Scraper, as explained in the <a href="/page/about">about section</a>. Many years later after the nick was created, I actually started to enjoy web scraping. The real fun began when I started using R! Especially the great <a href="https://github.com/hadley/rvest">rvest package</a>. I have built my own package called <a href="https://github.com/pdrhlik/southparkr">southparkr</a> that has all the necessary functions to scrape the data. It can be easily modified to create a scraper for a different show. I will try to do that myself in the future.</p>
 <p>But let’s move on to finally see some action!</p>
 </div>
 <div id="getting-episode-links" class="section level2">
@@ -67,7 +66,7 @@ season_names &lt;- season_nodes %&gt;%
 <h2>We have the links but we want more!</h2>
 <p>The next step is to scrape the actual conversations. That shouldn’t be a problem With all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.</p>
 <p><img src="/img/wikia-table-example.png" title="Example of a table with scripts on southpark.wikia.com" alt="Example of a table with scripts on southpark.wikia.com" /></p>
-<p>There is a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn’t have any identifiers. But fortunately, it is always the second table on the script page. <code>rvest</code> will help us here again.</p>
+<p>There are a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn’t have any identifiers. But fortunately, it is always the second table on the script page. <code>rvest</code> will help us here again.</p>
 <pre><code>episode &lt;- episode_link %&gt;%
     xml2::read_html() %&gt;%
     rvest::html_nodes(&quot;table:nth-of-type(1)&quot;) %&gt;%
@@ -78,10 +77,10 @@ season_names &lt;- season_nodes %&gt;%
         character = X1,
         text = X2
     )</code></pre>
-<p>The above code parses the HTML table and renames the to columns to <code>character</code> and <code>text</code>. The table doesn’t have a header, so <code>rvest</code> calls these two variables <code>X1</code> and <code>X2</code> by default. It also adds an <code>episode_link</code> to the data frame. Similarly to the approach of getting links, we can use <code>purrr</code> to apply this to all episodes. Consider the above code chunk to be a body of a function <code>fetch_episode(episode_link)</code>.</p>
+<p>The above code parses the HTML table and renames them to columns to <code>character</code> and <code>text</code>. The table doesn’t have a header, so <code>rvest</code> calls these two variables <code>X1</code> and <code>X2</code> by default. It also adds an <code>episode_link</code> to the data frame. Similarly to the approach of getting links, we can use <code>purrr</code> to apply this to all episodes. Consider the above code chunk to be a body of a function <code>fetch_episode(episode_link)</code>.</p>
 <pre><code>all_episodes &lt;- purrr::map_df(episode_list$episode_link, fetch_episode) %&gt;%
     dplyr::left_join(episode_list, by = &quot;episode_link&quot;)</code></pre>
-<pre><code>## Observations: 78,985
+<pre><code>## Observations: 78,987
 ## Variables: 9
 ## $ character             &lt;chr&gt; &quot;Cartman Gets an Anal Probe&quot;, &quot;Boys&quot;, &quot;K...
 ## $ text                  &lt;chr&gt; &quot;Cartman Gets an Anal Probe&quot;, &quot;School da...
@@ -134,7 +133,7 @@ season_names &lt;- season_nodes %&gt;%
 ## $ episode_name          &lt;chr&gt; &quot;Unaired Pilot&quot;, &quot;Cartman Gets an Anal P...
 ## $ air_date              &lt;date&gt; 2003-06-03, 1997-08-13, 1997-08-20, 199...
 ## $ user_rating           &lt;dbl&gt; 7.6, 8.2, 7.9, 7.9, 7.8, 7.7, 8.2, 8.5, ...
-## $ user_votes            &lt;dbl&gt; 227, 2653, 2083, 1988, 1919, 1792, 1849,...</code></pre>
+## $ user_votes            &lt;dbl&gt; 228, 2654, 2084, 1989, 1920, 1793, 1850,...</code></pre>
 <p>IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called <strong>Unaired Pilot</strong> from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot too <a href="https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script">here</a>. But I decided only to include the official episodes.</p>
 <p>The last thing to do is to join these data frames together and we are ready to do some preprocessing!</p>
 <pre class="r"><code>episodes_with_ratings &lt;- left_join(
@@ -142,7 +141,7 @@ season_names &lt;- season_nodes %&gt;%
     all_ratings,
     by = c(&quot;season_number&quot;, &quot;season_episode_number&quot;)
 )</code></pre>
-<pre><code>## Observations: 78,985
+<pre><code>## Observations: 78,987
 ## Variables: 12
 ## $ character             &lt;chr&gt; &quot;Cartman Gets an Anal Probe&quot;, &quot;Boys&quot;, &quot;K...
 ## $ text                  &lt;chr&gt; &quot;Cartman Gets an Anal Probe&quot;, &quot;School da...
@@ -155,12 +154,12 @@ season_names &lt;- season_nodes %&gt;%
 ## $ season_year           &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997...
 ## $ air_date              &lt;date&gt; 1997-08-13, 1997-08-13, 1997-08-13, 199...
 ## $ user_rating           &lt;dbl&gt; 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, ...
-## $ user_votes            &lt;dbl&gt; 2653, 2653, 2653, 2653, 2653, 2653, 2653...</code></pre>
+## $ user_votes            &lt;dbl&gt; 2654, 2654, 2654, 2654, 2654, 2654, 2654...</code></pre>
 </div>
 </div>
 <div id="whats-next-tidytext-analysis" class="section level1">
 <h1>What’s next? Tidytext analysis!</h1>
 <p>At first, I thought that I would fit everything in one article but the scraping itself got a bit longer than expected. Therefore I decided to split it in two. Web scraping using <code>rvest</code> is really easy and I enjoy it a lot! I will show you an interesting text analysis in the next article. Except for the basic stuff you can do with the <code>stringr</code> or <code>tidytext</code> packages, I will also try to answer a few questions.</p>
 <p>Are naughtier episodes (read with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtier character in all the series? Or is it someone else?</p>
-<p>Thanks for reading and wait for the next one. If you know South Park, trust me, it will be wort it! If not, you might at least learn something new.</p>
+<p>Thanks for reading and wait for the next one. If you know South Park, trust me, it will be worth it! If not, you might at least learn something new.</p>
 </div>

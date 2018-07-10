@@ -9,7 +9,8 @@ tags:
   - southparkr
   - rvest
   - web-scraping
-slug: going-down-to-south-park-to-make-some-tidytext-analysis
+slug: south-park-analysis-i-script-scraping
+draft: no
 ---
 
 <img src="/img/boys.png" title="South Park - Stan, Kyle, Eric, Kenny" alt="South Park main characters" />
@@ -22,7 +23,7 @@ I like the show a lot. I've seen each of the episodes for at least 10 times and 
 
 ## I am the Scraper
 
-The whole nick name would be Patrio Scraper, as explained in the [about section](/page/about). Many years later after the nick was created, I actually started to enjoy web scraping. The real fun began when I started using R! Especially the great [rvest package](https://github.com/hadley/rvest). I have built my own package called [southparkr](https://github.com/pdrhlik/southparkr) that has all the necessary functions to scrape the data. It can be easily modified to create a scraper for a different show. I will try to do that myself in the future.
+The whole nickname would be Patrio Scraper, as explained in the [about section](/page/about). Many years later after the nick was created, I actually started to enjoy web scraping. The real fun began when I started using R! Especially the great [rvest package](https://github.com/hadley/rvest). I have built my own package called [southparkr](https://github.com/pdrhlik/southparkr) that has all the necessary functions to scrape the data. It can be easily modified to create a scraper for a different show. I will try to do that myself in the future.
 
 But let's move on to finally see some action!
 
@@ -78,7 +79,7 @@ The next step is to scrape the actual conversations. That shouldn't be a problem
 
 <img src="/img/wikia-table-example.png" title="Example of a table with scripts on southpark.wikia.com" alt="Example of a table with scripts on southpark.wikia.com" />
 
-There is a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn't have any identifiers. But fortunately, it is always the second table on the script page. `rvest` will help us here again.
+There are a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn't have any identifiers. But fortunately, it is always the second table on the script page. `rvest` will help us here again.
 
 ```
 episode <- episode_link %>%
@@ -93,7 +94,7 @@ episode <- episode_link %>%
 	)
 ```
 
-The above code parses the HTML table and renames the to columns to `character` and `text`. The table doesn't have a header, so `rvest` calls these two variables `X1` and `X2` by default. It also adds an `episode_link` to the data frame. Similarly to the approach of getting links, we can use `purrr` to apply this to all episodes. Consider the above code chunk to be a body of a function `fetch_episode(episode_link)`.
+The above code parses the HTML table and renames them to columns to `character` and `text`. The table doesn't have a header, so `rvest` calls these two variables `X1` and `X2` by default. It also adds an `episode_link` to the data frame. Similarly to the approach of getting links, we can use `purrr` to apply this to all episodes. Consider the above code chunk to be a body of a function `fetch_episode(episode_link)`.
 
 ```
 all_episodes <- purrr::map_df(episode_list$episode_link, fetch_episode) %>%
@@ -180,4 +181,4 @@ At first, I thought that I would fit everything in one article but the scraping 
 
 Are naughtier episodes (read with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtier character in all the series? Or is it someone else?
 
-Thanks for reading and wait for the next one. If you know South Park, trust me, it will be wort it! If not, you might at least learn something new.
+Thanks for reading and wait for the next one. If you know South Park, trust me, it will be worth it! If not, you might at least learn something new.

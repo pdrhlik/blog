@@ -13,7 +13,7 @@ slug: south-park-analysis-i-script-scraping
 draft: no
 ---
 
-<img src="/img/boys.png" title="South Park - Stan, Kyle, Eric, Kenny" alt="South Park main characters" />
+<img src="/img/boys.png" title="South Park – Stan, Kyle, Eric, Kenny" alt="South Park main characters" />
 
 # South Park, my favourite TV show
 
@@ -29,7 +29,7 @@ But let's move on to finally see some action!
 
 ## Getting episode links
 
-The page with scripts has three levels. The [top level](https://southpark.wikia.com/wiki/Portal:Scripts) points to a list of seasons. Each season has an image and a link. Then we can get deeper into the [season level (link to season one)](https://southpark.wikia.com/wiki/Portal:Scripts/Season_One). We can see a list of episodes here, each pointing to the [last level - scripts themselves (link to S01E01)](https://southpark.wikia.com/wiki/Cartman_Gets_an_Anal_Probe/Script).
+The page with scripts has three levels. The [top level](https://southpark.wikia.com/wiki/Portal:Scripts) points to a list of seasons. Each season has an image and a link. Then we can get deeper into the [season level (link to season one)](https://southpark.wikia.com/wiki/Portal:Scripts/Season_One). We can see a list of episodes here, each pointing to the [last level – scripts themselves (link to S01E01)](https://southpark.wikia.com/wiki/Cartman_Gets_an_Anal_Probe/Script).
 
 I will show and describe functions from [southparkr](https://github.com/pdrhlik/southparkr). Let's get the links and glimpse at the resulting data frame.
 
@@ -42,7 +42,7 @@ episode_list <- fetch_episode_list()
 glimpse(episode_list)
 ```
 
-We can see that the data frame has 287 rows - the same number as all the episodes, that's a success! Each row has basic information about an episode. Its name, position in a season and most importantly, the link to the script page.
+We can see that the data frame has 287 rows – the same number as all the episodes, that's a success! Each row has basic information about an episode. Its name, position in a season and most importantly, the link to the script page.
 
 The simplified HTML that we are scraping from the first two levels looks like this:
 
@@ -75,7 +75,7 @@ Look at the implementation of `fetch_season_episode_list` and `fetch_episode_lis
 
 ## We have the links but we want more!
 
-The next step is to scrape the actual conversations. That shouldn't be a problem With all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.
+The next step is to scrape the actual conversations. That shouldn't be a problem with all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.
 
 <img src="/img/wikia-table-example.png" title="Example of a table with scripts on southpark.wikia.com" alt="Example of a table with scripts on southpark.wikia.com" />
 
@@ -94,7 +94,7 @@ episode <- episode_link %>%
 	)
 ```
 
-The above code parses the HTML table and renames them to columns to `character` and `text`. The table doesn't have a header, so `rvest` calls these two variables `X1` and `X2` by default. It also adds an `episode_link` to the data frame. Similarly to the approach of getting links, we can use `purrr` to apply this to all episodes. Consider the above code chunk to be a body of a function `fetch_episode(episode_link)`.
+The above code parses the HTML table and renames the columns to `character` and `text`. The table doesn't have a header, so `rvest` calls these two variables `X1` and `X2` by default. It also adds an `episode_link` to the data frame. Similarly to the approach of getting links, we can use `purrr` to apply this to all episodes. Consider the above code chunk to be a body of a function `fetch_episode(episode_link)`.
 
 ```
 all_episodes <- purrr::map_df(episode_list$episode_link, fetch_episode) %>%
@@ -110,9 +110,9 @@ After all of these steps, we have prepared all the raw data that can be processe
 
 ## How about IMDB ratings?
 
-There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. [IMDB](https://www.imdb.com) has exactly the data we need. The only unfortunate problem is that they don't allow data scraping from their website as stated [here on their help page](https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#).
+There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. [IMDB](https://www.imdb.com) has exactly the data we need. The only unfortunate problem is that they don't allow data scraping from their website as stated [on their help page](https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#).
 
-I have to admit that I have created a scraper that they forbid. It solely for the purpose of the `southparkr` package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage [here](https://www.imdb.com/interfaces/) but I haven't managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.
+I have to admit that I have created a scraper that they forbid. It was mafe solely for the purpose of the `southparkr` package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage [here](https://www.imdb.com/interfaces/) but I haven't managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.
 
 That means that the following code should not be used by anyone. It should only be viewed as an educational example.
 
@@ -145,7 +145,7 @@ fetch_season_ratings <- function(season_number) {
 }
 ```
 
-`fetch_season_ratings(season_number)` scrapes the average user rating and user votes for a certain season. Following a similar pattern as before, you can easily get ratings across all seasons with `purrr`.
+`fetch_season_ratings(season_number)` scrapes the average user rating and user votes for a certain season. Following a similar pattern as before, you can easily get ratings from all seasons with `purrr`.
 
 ```
 all_ratings <- purrr::map_df(season_numbers, fetch_season_ratings)
@@ -156,7 +156,7 @@ all_ratings <- southparkr::fetch_ratings(1:21)
 glimpse(all_ratings)
 ```
 
-IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called **Unaired Pilot** from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot too [here](https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script). But I decided only to include the official episodes.
+IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called **Unaired Pilot** from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot [here](https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script). But I decided only to include the official episodes.
 
 The last thing to do is to join these data frames together and we are ready to do some preprocessing!
 
@@ -179,6 +179,6 @@ episodes_with_ratings %>%
 
 At first, I thought that I would fit everything in one article but the scraping itself got a bit longer than expected. Therefore I decided to split it in two. Web scraping using `rvest` is really easy and I enjoy it a lot! I will show you an interesting text analysis in the next article. Except for the basic stuff you can do with the `stringr` or `tidytext` packages, I will also try to answer a few questions.
 
-Are naughtier episodes (read with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtier character in all the series? Or is it someone else?
+Are naughtier episodes (read: with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtiest character in all the series? Or is it someone else?
 
 Thanks for reading and wait for the next one. If you know South Park, trust me, it will be worth it! If not, you might at least learn something new.

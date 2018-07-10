@@ -15,7 +15,7 @@ draft: no
 
 
 
-<p><img src="/img/boys.png" title="South Park - Stan, Kyle, Eric, Kenny" alt="South Park main characters" /></p>
+<p><img src="/img/boys.png" title="South Park – Stan, Kyle, Eric, Kenny" alt="South Park main characters" /></p>
 <div id="south-park-my-favourite-tv-show" class="section level1">
 <h1>South Park, my favourite TV show</h1>
 <p><a href="https://en.wikipedia.org/wiki/South_Park">South Park</a> is an American TV show made with a sloppy animation. I think that most of the people around the globe have heard about. It is known for being very satiric. There probably isn’t a famous person left in the world that hasn’t been made fun of in the series. Check out the <a href="https://southpark.wikia.com/wiki/Category:Celebrities">list of celebrities here</a>. The creators, Trey Parker and Matt Stone, aired their first episode in 1997 and the show is still on after 21 seasons and 287 episodes.</p>
@@ -27,7 +27,7 @@ draft: no
 </div>
 <div id="getting-episode-links" class="section level2">
 <h2>Getting episode links</h2>
-<p>The page with scripts has three levels. The <a href="https://southpark.wikia.com/wiki/Portal:Scripts">top level</a> points to a list of seasons. Each season has an image and a link. Then we can get deeper into the <a href="https://southpark.wikia.com/wiki/Portal:Scripts/Season_One">season level (link to season one)</a>. We can see a list of episodes here, each pointing to the <a href="https://southpark.wikia.com/wiki/Cartman_Gets_an_Anal_Probe/Script">last level - scripts themselves (link to S01E01)</a>.</p>
+<p>The page with scripts has three levels. The <a href="https://southpark.wikia.com/wiki/Portal:Scripts">top level</a> points to a list of seasons. Each season has an image and a link. Then we can get deeper into the <a href="https://southpark.wikia.com/wiki/Portal:Scripts/Season_One">season level (link to season one)</a>. We can see a list of episodes here, each pointing to the <a href="https://southpark.wikia.com/wiki/Cartman_Gets_an_Anal_Probe/Script">last level – scripts themselves (link to S01E01)</a>.</p>
 <p>I will show and describe functions from <a href="https://github.com/pdrhlik/southparkr">southparkr</a>. Let’s get the links and glimpse at the resulting data frame.</p>
 <pre class="r"><code># devtools::install_github(&quot;pdrhlik/southparkr&quot;)
 require(southparkr)
@@ -44,7 +44,7 @@ glimpse(episode_list)</code></pre>
 ## $ season_name           &lt;chr&gt; &quot;Season One&quot;, &quot;Season One&quot;, &quot;Season One&quot;...
 ## $ season_number         &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2...
 ## $ season_year           &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997...</code></pre>
-<p>We can see that the data frame has 287 rows - the same number as all the episodes, that’s a success! Each row has basic information about an episode. Its name, position in a season and most importantly, the link to the script page.</p>
+<p>We can see that the data frame has 287 rows – the same number as all the episodes, that’s a success! Each row has basic information about an episode. Its name, position in a season and most importantly, the link to the script page.</p>
 <p>The simplified HTML that we are scraping from the first two levels looks like this:</p>
 <pre><code>&lt;div class=&quot;wikia-gallery-item&quot;&gt;
   &lt;a href=&quot;/wiki/Portal:Scripts/Season_One&quot; title=&quot;Portal:Scripts/Season One&quot;&gt;Season One&lt;/a&gt;
@@ -64,7 +64,7 @@ season_names &lt;- season_nodes %&gt;%
 </div>
 <div id="we-have-the-links-but-we-want-more" class="section level2">
 <h2>We have the links but we want more!</h2>
-<p>The next step is to scrape the actual conversations. That shouldn’t be a problem With all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.</p>
+<p>The next step is to scrape the actual conversations. That shouldn’t be a problem with all the links we have now. Each script page contains a table with two columns. We scrape a character name from the first column and a text line from the second. Take a look at the first few rows of the table at a script page.</p>
 <p><img src="/img/wikia-table-example.png" title="Example of a table with scripts on southpark.wikia.com" alt="Example of a table with scripts on southpark.wikia.com" /></p>
 <p>There are a few inconsistencies but we can handle those later. We need to get the raw data first. The table doesn’t have any identifiers. But fortunately, it is always the second table on the script page. <code>rvest</code> will help us here again.</p>
 <pre><code>episode &lt;- episode_link %&gt;%
@@ -77,7 +77,7 @@ season_names &lt;- season_nodes %&gt;%
         character = X1,
         text = X2
     )</code></pre>
-<p>The above code parses the HTML table and renames them to columns to <code>character</code> and <code>text</code>. The table doesn’t have a header, so <code>rvest</code> calls these two variables <code>X1</code> and <code>X2</code> by default. It also adds an <code>episode_link</code> to the data frame. Similarly to the approach of getting links, we can use <code>purrr</code> to apply this to all episodes. Consider the above code chunk to be a body of a function <code>fetch_episode(episode_link)</code>.</p>
+<p>The above code parses the HTML table and renames the columns to <code>character</code> and <code>text</code>. The table doesn’t have a header, so <code>rvest</code> calls these two variables <code>X1</code> and <code>X2</code> by default. It also adds an <code>episode_link</code> to the data frame. Similarly to the approach of getting links, we can use <code>purrr</code> to apply this to all episodes. Consider the above code chunk to be a body of a function <code>fetch_episode(episode_link)</code>.</p>
 <pre><code>all_episodes &lt;- purrr::map_df(episode_list$episode_link, fetch_episode) %&gt;%
     dplyr::left_join(episode_list, by = &quot;episode_link&quot;)</code></pre>
 <pre><code>## Observations: 78,987
@@ -95,8 +95,8 @@ season_names &lt;- season_nodes %&gt;%
 </div>
 <div id="how-about-imdb-ratings" class="section level2">
 <h2>How about IMDB ratings?</h2>
-<p>There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. <a href="https://www.imdb.com">IMDB</a> has exactly the data we need. The only unfortunate problem is that they don’t allow data scraping from their website as stated <a href="https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#">here on their help page</a>.</p>
-<p>I have to admit that I have created a scraper that they forbid. It solely for the purpose of the <code>southparkr</code> package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage <a href="https://www.imdb.com/interfaces/">here</a> but I haven’t managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.</p>
+<p>There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. <a href="https://www.imdb.com">IMDB</a> has exactly the data we need. The only unfortunate problem is that they don’t allow data scraping from their website as stated <a href="https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#">on their help page</a>.</p>
+<p>I have to admit that I have created a scraper that they forbid. It was mafe solely for the purpose of the <code>southparkr</code> package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage <a href="https://www.imdb.com/interfaces/">here</a> but I haven’t managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.</p>
 <p>That means that the following code should not be used by anyone. It should only be viewed as an educational example.</p>
 <pre><code>fetch_season_ratings &lt;- function(season_number) {
     rating_url &lt;- paste0(&quot;https://www.imdb.com/title/tt0121955/episodes?season=&quot;, season_number)
@@ -124,7 +124,7 @@ season_names &lt;- season_nodes %&gt;%
 
     return(ratings)
 }</code></pre>
-<p><code>fetch_season_ratings(season_number)</code> scrapes the average user rating and user votes for a certain season. Following a similar pattern as before, you can easily get ratings across all seasons with <code>purrr</code>.</p>
+<p><code>fetch_season_ratings(season_number)</code> scrapes the average user rating and user votes for a certain season. Following a similar pattern as before, you can easily get ratings from all seasons with <code>purrr</code>.</p>
 <pre><code>all_ratings &lt;- purrr::map_df(season_numbers, fetch_season_ratings)</code></pre>
 <pre><code>## Observations: 288
 ## Variables: 6
@@ -134,7 +134,7 @@ season_names &lt;- season_nodes %&gt;%
 ## $ air_date              &lt;date&gt; 2003-06-03, 1997-08-13, 1997-08-20, 199...
 ## $ user_rating           &lt;dbl&gt; 7.6, 8.2, 7.9, 7.9, 7.8, 7.7, 8.2, 8.5, ...
 ## $ user_votes            &lt;dbl&gt; 228, 2654, 2084, 1989, 1920, 1793, 1850,...</code></pre>
-<p>IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called <strong>Unaired Pilot</strong> from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot too <a href="https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script">here</a>. But I decided only to include the official episodes.</p>
+<p>IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called <strong>Unaired Pilot</strong> from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot <a href="https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script">here</a>. But I decided only to include the official episodes.</p>
 <p>The last thing to do is to join these data frames together and we are ready to do some preprocessing!</p>
 <pre class="r"><code>episodes_with_ratings &lt;- left_join(
     all_episodes,
@@ -160,6 +160,6 @@ season_names &lt;- season_nodes %&gt;%
 <div id="whats-next-tidytext-analysis" class="section level1">
 <h1>What’s next? Tidytext analysis!</h1>
 <p>At first, I thought that I would fit everything in one article but the scraping itself got a bit longer than expected. Therefore I decided to split it in two. Web scraping using <code>rvest</code> is really easy and I enjoy it a lot! I will show you an interesting text analysis in the next article. Except for the basic stuff you can do with the <code>stringr</code> or <code>tidytext</code> packages, I will also try to answer a few questions.</p>
-<p>Are naughtier episodes (read with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtier character in all the series? Or is it someone else?</p>
+<p>Are naughtier episodes (read: with bigger swear word ratio) more popular on IMDB? Or my favourite, is Eric Cartman the naughtiest character in all the series? Or is it someone else?</p>
 <p>Thanks for reading and wait for the next one. If you know South Park, trust me, it will be worth it! If not, you might at least learn something new.</p>
 </div>

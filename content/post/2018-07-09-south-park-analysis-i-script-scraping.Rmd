@@ -112,7 +112,7 @@ After all of these steps, we have prepared all the raw data that can be processe
 
 There is still one thing that could make our raw data better. How about episode ratings? I have quite a few ideas about how to use them already. [IMDB](https://www.imdb.com) has exactly the data we need. The only unfortunate problem is that they don't allow data scraping from their website as stated [on their help page](https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#).
 
-I have to admit that I have created a scraper that they forbid. It was mafe solely for the purpose of the `southparkr` package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage [here](https://www.imdb.com/interfaces/) but I haven't managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.
+I have to admit that I have created a scraper that they forbid. It was made solely for the purpose of the `southparkr` package and definitely not for a commercial use. I know that they offer a few publicly available datasets for non-commercial usage [here](https://www.imdb.com/interfaces/) but I haven't managed to parse the necessary information from there yet. I will do that soon and update the R package so that it uses these datasets instead of scraping techniques.
 
 That means that the following code should not be used by anyone. It should only be viewed as an educational example.
 
@@ -156,7 +156,7 @@ all_ratings <- southparkr::fetch_ratings(1:21)
 glimpse(all_ratings)
 ```
 
-IMDB actually has one more episode than Wikia scripts. Can you see, why is that? There is an episode called **Unaired Pilot** from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot [here](https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script). But I decided only to include the official episodes.
+IMDB actually has one more episode than Wikia scripts. Can you see why? There is an episode called **Unaired Pilot** from season one and its episode number is zero. It is actually the first version of the official episode one. You can actually find the script for the pilot [here](https://southpark.wikia.com/wiki/The_Unaired_Pilot/Script). But I decided only to include the official episodes.
 
 The last thing to do is to join these data frames together and we are ready to do some preprocessing!
 
